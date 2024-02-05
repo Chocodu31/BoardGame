@@ -6,4 +6,4 @@ I'm trying to do board game in terminal
 
 (WORK IN PROGRESS)
 
-(Chocodu31 - Raphaël GOUL)
+(Chocodu31 - Raphaël GOUL - Don't full copy please)
