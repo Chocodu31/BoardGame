@@ -7,7 +7,7 @@ class Dune:
     def __init__(self):
         # The board
         self.grille = [
-            ["  ", "  A", " B", " C", " D", " E", " F", " G", " H", " I", " J "],
+            ["  ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
             ["01", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
             ["02", "○", "○", "○", "○", "○", "○", "○", "○", "○", "○"],
             ["03", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
@@ -20,8 +20,10 @@ class Dune:
             ["10", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
         ]
 
-        # Maybe find another way #
+        ########################################
+        # Maybe find another way
         self.status_dico = {0: "Dead", 1: "Alive", 2: "Protected"}
+        ########################################
 
         ########################################
         # I need to replace this with ASCII code
@@ -37,13 +39,27 @@ class Dune:
     ###################
 
     def show_board(self):
-        for k in range(len(self.grille[0]) - 1):
-            print(self.grille[0][k], end=" ▐ ")
-        print(self.grille[0][10], " ▌")
-        print("      ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁")
-        for i in range(1, len(self.grille)):
-            print(self.grille[i][0], "▐", self.grille[i][1:], "▌")
-        print("      ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔")
+
+        # Print the Letter #
+        print(self.grille[0][0], end=" ▌ ")
+        for k in range(1, len(self.grille[0])):
+            if k == len(self.grille[0])-1:
+                print(self.grille[0][k], end=" ▐ ")
+            else:
+                print(self.grille[0][k], end=" | ")
+        print("")
+
+        # Print the board #
+        print("    ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁")
+        for y in range(1, len(self.grille)):
+            print(self.grille[y][0], "▌ ", end="")
+            for x in range(1, len(self.grille[0])):
+                if x == len(self.grille[0])-1:
+                    print(self.grille[y][x], "▐ ", end="")
+                else:
+                    print(self.grille[y][x], "| ", end="")
+            print("")
+        print("    ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔")
 
     ######################
     # Turn of the Player #
@@ -83,7 +99,8 @@ class Dune:
     ##################
 
     def start(self):
-        print("                   Dune game (Partonia)")
+        print("")
+        print("             Dune game (Partonia)")
         print("")
         self.show_board()
         self.begining_analysis()
