@@ -3,7 +3,7 @@ def show(grille):
     for i in range(len(grille)):
         print(grille[i])
 
-    
+
 # Affiche les mouvement possible du pion choisi sur le plateau et demande quel move faire
 def moveshow(grille, x1, y1, player):
     valid = 0
@@ -29,21 +29,22 @@ def moveshow(grille, x1, y1, player):
             return 0
         elif select == 1 and movegrille[y1 - 1][x1] == "1":
             grille[y1][x1] = "-"
-            grille[y1 -1][x1] = player
-            return True
+            grille[y1 - 1][x1] = player
+            return "Up"
         elif select == 2 and movegrille[y1][x1 + 1] == "2":
             grille[y1][x1] = "-"
             grille[y1][x1 + 1] = player
-            return True
+            return "Right"
         elif select == 3 and movegrille[y1 + 1][x1] == "3":
             grille[y1][x1] = "-"
-            movegrille[y1 + 1][x1] = player
-            return True
+            grille[y1 + 1][x1] = player
+            return "Down"
         elif select == 4 and movegrille[y1][x1 - 1] == "4":
             grille[y1][x1] = "-"
-            movegrille[y1][x1 - 1] = player
-            return True
+            grille[y1][x1 - 1] = player
+            return "Left"
         print("Out of range !")
+
 
 # Tour du Joueur 1 (□)
 def p1turn(grille, dico):
@@ -64,13 +65,14 @@ def p1turn(grille, dico):
                 if choice == 0:
                     print("Can't move that !")
                     continue
-                else:
+                elif choice == "Up":
                     break
             else:
                 print("Error : The case is empty, or it's not your piece !")
         else:
             print("Error : Out of range !")
     show(grille)
+
 
 # Tour du Joueur 2 (■)
 def p2turn(grille, dico):
@@ -99,6 +101,7 @@ def p2turn(grille, dico):
             print("Error : Out of range !")
     show(grille)
 
+
 # Plateau de jeu
 grille = [
     ["XX", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
@@ -113,8 +116,19 @@ grille = [
     ["09", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■"],
     ["10", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
 ]
-
-dico = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9, "J": 10}
+status = {0: "Dead", 1: "Alive", 2: "Protected"}
+dico = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9, "J": 10, "a": 1, "b": 2, "c": 3, "d": 4,
+        "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10}
+pions1 = []
+pions2 = []
+# Begining analysis
+for i in range(1, len(grille[0])):
+    for k in range(1, len(grille)):
+        if grille[i][k] == "□":
+            pions1.append([i, k, 1])
+        elif grille[i][k] == "■":
+            pions2.append([i, k, 1])
+print(pions1)
 show(grille)
 while True:
     p1turn(grille, dico)
