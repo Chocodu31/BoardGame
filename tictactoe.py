@@ -11,8 +11,12 @@ class TicTacToe:
 
     # Print the board
     def show(self):
+        print("—————————————————")
         for i in range(len(self.grille)):
-            print(self.grille[i])
+            for k in range(len(self.grille)):
+                print("|", self.grille[i][k], end=" | ")
+            print("")
+        print("—————————————————")
 
     # The turn for the X (Player 1)
     def xturn(self):
