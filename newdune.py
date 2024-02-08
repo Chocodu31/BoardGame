@@ -5,7 +5,8 @@ class Dune:
     ##################################################################################
 
     def __init__(self):
-        # The board
+
+        # The board #
         self.grille = [
             ["  ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
             ["01", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
@@ -43,7 +44,7 @@ class Dune:
         # Print the Letter #
         print(self.grille[0][0], end=" ▌ ")
         for k in range(1, len(self.grille[0])):
-            if k == len(self.grille[0])-1:
+            if k == len(self.grille[0]) - 1:
                 print(self.grille[0][k], end=" ▐ ")
             else:
                 print(self.grille[0][k], end=" | ")
@@ -54,12 +55,36 @@ class Dune:
         for y in range(1, len(self.grille)):
             print(self.grille[y][0], "▌ ", end="")
             for x in range(1, len(self.grille[0])):
-                if x == len(self.grille[0])-1:
+                if x == len(self.grille[0]) - 1:
                     print(self.grille[y][x], "▐ ", end="")
                 else:
                     print(self.grille[y][x], "| ", end="")
             print("")
         print("    ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔")
+
+    #################################################
+    # Turn input into readable data                 #
+    # Clearly easier and faster with dictionary btw #
+    #################################################
+
+    def input_convertor(self, playerinput):
+        x1 = 0
+        y1 = 0
+        if len(playerinput) == 2:
+
+            # Detect if there a letter and a number in the playerinput #
+            if (playerinput[0].isalpha() and playerinput[1].isdigit()) or (
+                    playerinput[1].isalpha() and playerinput[0].isdigit()):
+                if playerinput[0].isalpha():
+                    x1 = ord(playerinput[0].upper()) - ord("A") + 1
+                    y1 = playerinput[1]
+                elif playerinput[1].isalpha():
+                    x1 = ord(playerinput[1].upper()) - ord("A") + 1
+                    y1 = playerinput[0]
+                print(x1, y1)
+                return True
+            return False
+        return False
 
     ######################
     # Turn of the Player #
@@ -67,6 +92,9 @@ class Dune:
 
     def player_turn(self):
         print("bruh")
+        playerinput = input("Input : ")
+        self.input_convertor(playerinput)
+
 
     ########################
     # Check if there a win #
@@ -104,7 +132,7 @@ class Dune:
         print("")
         self.show_board()
         self.begining_analysis()
-
+        self.player_turn()
 
 dune = Dune()
 dune.start()
