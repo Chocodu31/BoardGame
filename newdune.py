@@ -134,5 +134,6 @@ class Dune:
         self.begining_analysis()
         self.player_turn()
 
+# Start da game
 dune = Dune()
 dune.start()
