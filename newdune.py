@@ -26,12 +26,6 @@ class Dune:
         self.status_dico = {0: "Dead", 1: "Alive", 2: "Protected"}
         ########################################
 
-        ########################################
-        # I need to replace this with ASCII code
-        self.letter_dico = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9, "J": 10,
-                            "a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6, "g": 7, "h": 8, "i": 9, "j": 10}
-        ########################################
-
         self.pions1 = []
         self.pions2 = []
 
@@ -70,9 +64,9 @@ class Dune:
     def input_convertor(self, playerinput):
         x1 = 0
         y1 = 0
-        if len(playerinput) == 2:
 
-            # Detect if there a letter and a number in the playerinput #
+        # Detect if the input is correct #
+        if len(playerinput) == 2:
             if (playerinput[0].isalpha() and playerinput[1].isdigit()) or (
                     playerinput[1].isalpha() and playerinput[0].isdigit()):
                 if playerinput[0].isalpha():
@@ -94,7 +88,6 @@ class Dune:
         print("bruh")
         playerinput = input("Input : ")
         self.input_convertor(playerinput)
-
 
     ########################
     # Check if there a win #
