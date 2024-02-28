@@ -1,11 +1,22 @@
+# -*- coding: utf-8 -*-
+
 ####################################################################
 # Avant de commencer a lire le code, il y a quelques précision que #
 # je voudrais faire :                                              #
+#                                                                  #
+# - L'import os permet d'utiliser la commande                      #
+#   os.system("cls;clear") est uniquement dédié à                  #
+#   clear la console.                                              #
+#   Cela permet d'avoir un résultat plus propre lors de            #
+#   l'exécution.                                                   #
+#                                                                  #
 # - La fonction show_error permet d'afficher un message d'erreur   #
 #   (j'ai crée cette fonction dans le but d'avoir un code plus     #
 #   clair).                                                        #
-# -
+#                                                                  #
 ####################################################################
+
+import os
 
 
 #######################################################################
@@ -27,7 +38,8 @@ def show_board(grille):
     print("")
 
     # Print le plateau entier (en ajoutant les numéro de case au début) #
-    print("    ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁")
+    # print("    ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁")
+    print("    ───────────────────────────────────────")
     for y in range(0, len(grille)):
         if chiffre_show >= 10:
             print(chiffre_show, "▌ ", end="")
@@ -40,11 +52,12 @@ def show_board(grille):
                 print(grille[y][x], "| ", end="")
         print("")
         chiffre_show += 1
-    print("    ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔")
+    print("    ───────────────────────────────────────")
+    # print("    ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔")
 
 
 ################################################################################################################
-# DEBUT PARTIE : TRAITEMENT DE L'INPUT                                                                         #
+# DEBUT DE LA PARTIE SUR LE TRAITEMENT DE L'INPUT                                                              #
 
 
 ###################################################################################
@@ -56,8 +69,8 @@ def input_convertor(grille, player_turn):
     player_input = input("Sélectionner le pion (Format Type : 'A01' (LettreChiffre)) : ")
 
     # On appelle les autre fonction pour savoir si l'input est correct #
+    # Si l'input n'est pas correct, on redemande un autre input #
     while not est_au_bon_format(player_input, grille, player_turn):
-        # Si l'input n'est pas correct, on redemande un autre input #
         player_input = input("Sélectionner le pion (Format Type : 'A01' (LettreChiffre)) : ")
         print("")
 
@@ -87,16 +100,14 @@ def est_au_bon_format(player_input, grille, player_turn):
             if est_dans_grille(temp_ligne, temp_colonne, grille):
 
                 # Vérifie si le pion désigné par l'input, est un pion du joueur #
+                # Si tout est bon, return True #
                 if grille[temp_ligne][temp_colonne] == player_turn:
-                    # Si tout est bon, return True #
                     return True
 
                 else:
-
                     # Si l'input n'est pas un pion ou n'appartient pas au joueur, show_error affiche une erreur #
                     # Erreur : Input03 #
                     show_error("input03")
-
         else:
             # Si le format est incorrect, show_error affiche une erreur #
             # Erreur : Input01 #
@@ -115,18 +126,17 @@ def est_au_bon_format(player_input, grille, player_turn):
 
 def est_dans_grille(ligne, colonne, grille):
     # Vérifie si l'input ne dépasse pas la grille #
+    # Si l'input dépasse la grille, show_error affiche une erreur et return False #
     if len(grille) <= ligne or ligne < 0 or colonne < 0 or len(grille[0]) <= colonne:
-        # Si l'input dépasse la grille, show_error affiche une erreur #
         # Erreur = Input02 #
         show_error("input02")
-        # Si il y a une erreur, return False #
         return False
 
     # Si tout est bon, return True #
     return True
 
 
-# FIN PARTIE : TRAITEMENT DE L'INPUT                                                                           #
+# FIN DE LA PARTIE SUR LE TRAITEMENT DE L'INPUT                                                                #
 ################################################################################################################
 
 
@@ -136,6 +146,9 @@ def est_dans_grille(ligne, colonne, grille):
 #####################################################################
 
 def show_error(error):
+    # Permet de clear la console (uniquement possible lors de l'exécution hors IDE) #
+    # Cela donne un résultat plus propre #
+    os.system("cls;clear")
     print("")
     print("####################################")
 
@@ -156,10 +169,14 @@ def show_error(error):
 
         print("Votre input est incorrect !")
         print("####################################", end="\n\n")
-        return None
+    show_board(grille_start)
+    return None
 
 
-# Le plateau #
+################################################################################################################
+# DEBUT DE PARTIE SUR LES CONFIGURATIONS POSSIBLES                                                             #
+
+# Le plateau au début de la partie #
 grille_start = [
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
     ["○", "○", "○", "○", "○", "○", "○", "○", "○", "○"],
@@ -173,10 +190,12 @@ grille_start = [
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
 ]
 
+# Le plateau en milieu de partie #
+
+# Le plateau en fin de partie #
+
+print("Si l'affichage est trop petit, Ctrl+Molette pour zoomer (ou l'outil loupe windows)", end="\n\n")
 show_board(grille_start)
 player_turn = "●"
-
-test = "INPUT1"
-
 print(f"Tour des pions {player_turn}")
 input_convertor(grille_start, player_turn)
