@@ -25,10 +25,11 @@
 #   j'ai vérifié au près du professeur présentant le cours amphi   #
 #   de l'UE).                                                      #
 #                                                                  #
-# - La fonction "debuter_partie" permet de lancer une partie       #
+# - La fonction "choix_grille" permet de lancer une partie         #
 #   en définisant via choix, les paramètres de celle-ci.           #
 #   Elle n'était pas demandé cependant j'ai trouvé intéréssant     #
-#   d'en faire une (pour être plus compréhensible et pratique).    #
+#   d'en faire une (pour être plus compréhensible et pratique      #
+#   lors de mes futur test).                                       #
 #                                                                  #
 # - L'ensemble des fonctions font moins de 15 lignes comme         #
 #   stipulé (Si on retire tout les commentaire et retour à la      #
@@ -55,6 +56,11 @@ import os
 def afficher_grille(grille):
     chiffre_show = 1
     lettre_show = ord("A")
+
+    # Au cas où, on verifie que la grille n'est pas vide ou est une n'est pas liste,
+    # (malgré qu'il soit impossible que cela ce produise #
+    if grille == [] or type(grille[0]) != type([]):
+        return False
 
     # Print les lettre en haut du plateau #
     print("  ", end=" ▌ ")
@@ -89,17 +95,19 @@ def afficher_grille(grille):
 # DEBUT DE LA PARTIE SUR LE TRAITEMENT DE L'INPUT                                                              #
 
 
-###################################################################################
-# input_convertor, va convertir l'input en donnée lisible, mais va d'abord appelé #
-# est_au_bon_format pour vérifié si l'input est au bon format.                    #
-###################################################################################
+######################################################################################
+# saisir_coordonnees, va demandé un va ensuite appeler est_au_bon_format pour        #
+# vérifier son format (qui va appelé est_dans_grille) puis va définir les coordonées #
+# choisies                                                                           #
+######################################################################################
 
-def input_convertor(grille, player_turn):
+def saisir_coordonnees(grille, player_turn):
     player_input = input("Sélectionner le pion (Format Type : 'A01' (LettreChiffre)) : ")
 
     # On appelle les autre fonction pour savoir si l'input est correct #
     # Si l'input n'est pas correct, on redemande un autre input #
     while not est_au_bon_format(player_input, grille, player_turn):
+        afficher_grille(grille)
         player_input = input("Sélectionner le pion (Format Type : 'A01' (LettreChiffre)) : ")
         print("")
 
@@ -107,13 +115,18 @@ def input_convertor(grille, player_turn):
     colonne = ord(player_input[0].upper()) - ord("A")
     ligne = int(player_input[1] + player_input[2]) - 1
 
-    print(ligne, colonne)
+    print(
+        f"Les coordonée dans la grille sont\n Colonne : {colonne + 1}\n Ligne : {ligne + 1}\n"
+        f"Pour l'appeler : grille[{ligne}][{colonne}] = {grille[ligne][colonne]}")
+
+    # On return les valeurs #
+    return ligne, colonne
 
 
 ############################################################################
-# est_au_bon_format (appelé par input_convertor) va vérifié si l'input est #
-# au bon format (A01) (LettreChiffre) puis va appelé est_dans_grille       #
-# pour savoir l'input est possible                                         #
+# est_au_bon_format (appelé par saisir_coordonnees) va vérifié si l'input est #
+# au bon format (A01) (+ que le pion appartient au joueur (LettreChiffre)  #
+# puis va appelé est_dans_grille pour savoir l'input est possible          #
 ############################################################################
 
 def est_au_bon_format(player_input, grille, player_turn):
@@ -168,6 +181,9 @@ def est_dans_grille(ligne, colonne, grille):
 # FIN DE LA PARTIE SUR LE TRAITEMENT DE L'INPUT                                                                #
 ################################################################################################################
 
+################################################################################################################
+# DEBUT DES FONCTIONS FACULTATIVE                                                                              #
+
 
 #####################################################################
 # show_error permet de print l'erreur dans un format compréhensible #
@@ -201,21 +217,36 @@ def show_error(error):
     return None
 
 
-def debuter_partie():
+#####################################################################
+# choix_grille permet de choisir au début, la grille souhaitée      #
+#####################################################################
+
+def choix_grille(grille_start, grille_mid, grille_fin):
     test_valide = False
+
+    # On veut être sur que l'input est correct #
     while not test_valide:
         configuration = input("Veulliez sélectionner la configuration de jeu, dans laquelle vous voulez jouer :\n 1. "
                               "Début de partie\n 2. Milieu de partie\n 3. Fin de partie\nVotre choix : ")
-        for i in range(1, 3):
-            if configuration == str(i):
-                test_valide = True
-    # faut faire une vérification ici mais j'ai la flemme (surtout j'arrive pas)
-    tour_joueur = input("Veulliez sélectionner qui est la première personne a jouer :\n 1. ●"
-                        "\n 2. ○\nVotre choix : ")
 
+        # Si il est correct on désigne la grille #
+        if configuration == "1":
+            return grille_start
+        elif configuration == "2":
+            return grille_mid
+        elif configuration == "3":
+            return grille_fin
+        else:
+            # Si il ne l'est pas, retourne une erreur #
+            show_error("input01")
+
+
+# FIN DES FONCTIONS FACULTATIVE                                                                                #
+################################################################################################################
 
 ################################################################################################################
 # DEBUT DE PARTIE SUR LES CONFIGURATIONS POSSIBLES                                                             #
+
 
 # Le plateau au début de la partie #
 
@@ -236,15 +267,15 @@ grille_start = [
 
 grille_mid = [
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-    ["○", "○", "○", "○", "○", "○", "○", "○", "○", "○"],
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-    ["●", "●", "●", "●", "●", "●", "●", "●", "●", "●"],
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-    ["○", "○", "○", "○", "○", "○", "○", "○", "○", "○"],
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-    ["●", "●", "●", "●", "●", "●", "●", "●", "●", "●"],
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+    ["●", "-", "-", "○", "-", "○", "-", "-", "○", "○"],
+    ["-", "○", "○", "-", "●", "-", "-", "○", "●", "-"],
+    ["○", "●", "-", "-", "-", "-", "-", "●", "-", "●"],
+    ["-", "●", "-", "-", "-", "○", "●", "-", "○", "-"],
+    ["-", "-", "○", "-", "-", "-", "○", "-", "-", "-"],
+    ["-", "○", "●", "○", "-", "-", "-", "-", "-", "-"],
+    ["●", "●", "-", "-", "-", "-", "-", "●", "○", "○"],
+    ["-", "-", "-", "●", "-", "●", "-", "-", "-", "●"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "○", "-"]
 ]
 # Le plateau en fin de partie #
 
@@ -261,10 +292,32 @@ grille_fin = [
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
 ]
 
-debuter_partie()
+# FIN DE PARTIE SUR LES CONFIGURATIONS POSSIBLES                                                               #
+################################################################################################################
+
+# On demande la grille voulu, on l'affiche, on précise le tour, et on demande un input #
+grille_selected = choix_grille(grille_start, grille_mid, grille_fin)
 print("Lorsque vous exécuter le fichier .py dans l'invite de commande\nsi l'affichage est trop petit, utiliser"
       "Ctrl+Molette pour zoomer (ou l'outil loupe windows)", end="\n\n")
-afficher_grille(grille_start)
+afficher_grille(grille_selected)
 player_turn = "●"
+# print(f"....") permet de lire une variable entre {} dans un print)
 print(f"Tour des pions {player_turn}")
-input_convertor(grille_start, player_turn)
+ligne_selected, colonne_selected = saisir_coordonnees(grille_selected, player_turn)
+
+print(ligne_selected, colonne_selected)
+
+################################################################################################################
+# DEBUT DE PARTIE SUR LES TEST DE FONCTIONS                                                                    #
+print("----------------\n DEBUT TEST\n----------------")
+assert est_dans_grille(100, 100, grille_start) == False
+print("----------------\n TEST REUSSI\n----------------")
+assert est_dans_grille(0, 0, grille_start) == True
+print("----------------\n TEST REUSSI\n----------------")
+assert est_au_bon_format("A01", grille_start, player_turn) == False
+print("----------------\n TEST REUSSI\n----------------")
+assert est_au_bon_format("A04", grille_start, player_turn) == True
+print("----------------\n TEST REUSSI\n----------------")
+# FIN DE PARTIE SUR LES TEST DE FONCTIONS                                                                      #
+################################################################################################################
+
