@@ -44,6 +44,7 @@
 #    - Les Chiffres représentes des lignes (de haut en bas)        #
 #   Il n'y avait pas d'obligation pour ce choix (seulement des     #
 #   conseils).                                                     #
+#   (Cela ne change rien au code)                                  #
 ####################################################################
 
 import os
