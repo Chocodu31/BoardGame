@@ -302,6 +302,8 @@ ligne_selected, colonne_selected = saisir_coordonnees(grille_selected)
 
 print(ligne_selected, colonne_selected)
 
+input("Entrer pour terminer.... ")
+
 ################################################################################################################
 # DEBUT DE PARTIE SUR LES TEST DE FONCTIONS                                                                    #
 
