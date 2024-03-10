@@ -52,11 +52,26 @@ def tests_formats():
     assert not format_check("A01", dune.grille_start, turns[0])
     assert format_check("A04", dune.grille_start, turns[0])
 
+def not_oob_check(line, col, grille):
+    system_function = os.system
+    os.system = dummy_system_function
+    res = None
+    with redirect_stdout(None):
+        res = dune.est_dans_grille(line, col, grille)
+    os.system = system_function
+    return res
+
+def tests_not_oob():
+    assert not not_oob_check(100, 100, dune.grille_start)
+    assert not_oob_check(0, 0, dune.grille_start)
+
 def test():
     tests_convertor()
     print("Passed tests for 'dune.saisir_coordonnees'")
     tests_formats()
     print("Passed tests for 'dune.est_au_bon_format'")
+    tests_not_oob()
+    print("Passed tests for 'dune.est_dans_grille'")
     print("Successfully passed all tests !")
 
 if __name__ == "__main__":
