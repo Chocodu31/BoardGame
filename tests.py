@@ -5,7 +5,19 @@ import os
 
 os.environ["IS_TESTING"] = "1"
 
-dune = __import__("Atelier-2-DUNE")
+dune = None
+
+null_strIO = StringIO()
+sys_stdin = sys.stdin
+with redirect_stdout(null_strIO):
+    buff = StringIO()
+    buff.write("1\n")
+    buff.write("A04\n")
+    buff.write("a\n")
+    buff.seek(0)
+    sys.stdin = buff
+    dune = __import__("Atelier-2-DUNE-FINAL")
+sys.stdin = sys_stdin
 
 turns = ["●", "○"]
 
@@ -29,7 +41,7 @@ def test_convertor(input: str):
 
     stdout = StringIO()
     with redirect_stdout(stdout):
-        lines, cols = dune.saisir_coordonnees(dune.grille_start, turns[0])
+        lines, cols = dune.saisir_coordonnees(dune.grille_start)
     
     strIn.close()
     sys.stdin = original_stdin
@@ -39,18 +51,19 @@ def test_convertor(input: str):
 def tests_convertor():
     assert_tuple(test_convertor("A04"), (3, 0), 2)
 
-def format_check(coord, grille, turn):
+def format_check(coord, grille):
     system_function = os.system
     os.system = dummy_system_function
     res = None
     with redirect_stdout(None):
-        res = dune.est_au_bon_format(coord, grille, turn)
+        res = dune.est_au_bon_format(coord, grille)
     os.system = system_function
     return res
 
 def tests_formats():
-    assert not format_check("A01", dune.grille_start, turns[0])
-    assert format_check("A04", dune.grille_start, turns[0])
+    assert not format_check("A41", dune.grille_start)
+    assert not format_check("A410", dune.grille_start)
+    assert format_check("A04", dune.grille_start)
 
 def not_oob_check(line, col, grille):
     system_function = os.system
