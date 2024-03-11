@@ -296,38 +296,29 @@ grille_fin = [
 # FIN DE PARTIE SUR LES CONFIGURATIONS POSSIBLES                                                               #
 ################################################################################################################
 
-def main():
-    ################################################################################################################
-    # On vérifie si on souhaite uniquement tester les fonctions, si c'est le cas on n'execute pas le reste du code #
+# On demande la grille voulu, on l'affiche, on précise le tour, et on demande un input #
+grille_selected = choix_grille(grille_start, grille_mid, grille_fin)
+print("Lorsque vous exécuter le fichier .py dans l'invite de commande\nsi l'affichage est trop petit, utiliser"
+      "Ctrl+Molette pour zoomer (ou l'outil loupe windows)", end="\n\n")
+afficher_grille(grille_selected)
+player_turn = "●"
+# print(f"....") permet de lire une variable entre {} dans un print)
+print(f"Tour des pions {player_turn}")
+ligne_selected, colonne_selected = saisir_coordonnees(grille_selected, player_turn)
 
-    if os.environ['IS_TESTING']:
-        return
+print(ligne_selected, colonne_selected)
 
-    ################################################################################################################
+################################################################################################################
+# DEBUT DE PARTIE SUR LES TEST DE FONCTIONS                                                                    #
+print("----------------\n DEBUT TEST\n----------------")
+assert est_dans_grille(100, 100, grille_start) == False
+print("----------------\n TEST REUSSI\n----------------")
+assert est_dans_grille(0, 0, grille_start) == True
+print("----------------\n TEST REUSSI\n----------------")
+assert est_au_bon_format("A01", grille_start, player_turn) == False
+print("----------------\n TEST REUSSI\n----------------")
+assert est_au_bon_format("A04", grille_start, player_turn) == True
+print("----------------\n TEST REUSSI\n----------------")
+# FIN DE PARTIE SUR LES TEST DE FONCTIONS                                                                      #
+################################################################################################################
 
-    # On demande la grille voulu, on l'affiche, on précise le tour, et on demande un input #
-    grille_selected = choix_grille(grille_start, grille_mid, grille_fin)
-    print("Lorsque vous exécuter le fichier .py dans l'invite de commande\nsi l'affichage est trop petit, utiliser"
-          "Ctrl+Molette pour zoomer (ou l'outil loupe windows)", end="\n\n")
-    afficher_grille(grille_selected)
-    player_turn = "●"
-    # print(f"....") permet de lire une variable entre {} dans un print)
-    print(f"Tour des pions {player_turn}")
-    ligne_selected, colonne_selected = saisir_coordonnees(grille_selected, player_turn)
-
-    print(ligne_selected, colonne_selected)
-
-    ################################################################################################################
-    # DEBUT DE PARTIE SUR LES TEST DE FONCTIONS                                                                    #
-    print("----------------\n DEBUT TEST\n----------------")
-    assert est_dans_grille(100, 100, grille_start) == False
-    print("----------------\n TEST REUSSI\n----------------")
-    assert est_dans_grille(0, 0, grille_start) == True
-    print("----------------\n TEST REUSSI\n----------------")
-    assert est_au_bon_format("A01", grille_start, player_turn) == False
-    print("----------------\n TEST REUSSI\n----------------")
-    assert est_au_bon_format("A04", grille_start, player_turn) == True
-    print("----------------\n TEST REUSSI\n----------------")
-    # FIN DE PARTIE SUR LES TEST DE FONCTIONS                                                                      #
-    ################################################################################################################
-    
