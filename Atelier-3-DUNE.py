@@ -34,8 +34,8 @@
 #   configurations. (Rien n'interdit de faire cela)                #
 #                                                                  #
 # - L'ensemble des fonctions font moins de 15 lignes comme         #
-#   stipulé (Si on retire tout les commentaire et retour à la      #
-#   ligne que j'ai mit pour la lisibilité),                        #
+#   stipulé (Si on retire tout les commentaire, retour à la        #
+#   ligne et print que j'ai mit pour la lisibilité),               #
 #   (Hors "afficher_grille", celle-ci avait le droit d'être        #
 #   plus longue).                                                  #
 ####################################################################
@@ -46,57 +46,146 @@ import os
 ##########################################################################################
 # DEBUT ATELIER 3                                                                        #
 
-def protection():
-    print("")
+def capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel):
+    if joueur_actuel == "●":
+        joueur_adverse = "○"
+    else:
+        joueur_adverse = "●"
+
+    if ligne_arrivee == len(grille) - 1:
+        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
+    elif ligne_arrivee == 0:
+        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
+    elif ligne_arrivee == len(grille) - 2:
+        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
+    elif ligne_arrivee == 1:
+        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
+    else:
+        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
+
+    if colonne_arrivee == len(grille) - 1:
+        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
+    elif colonne_arrivee == 0:
+        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
+    elif colonne_arrivee == len(grille) - 2:
+        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
+    elif colonne_arrivee == 1:
+        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
+    else:
+        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
 
 
-def capture():
-    print("")
+def capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_y):
+    if -1 <= position_y <= 1 and position_y != 0:
+        if (grille[ligne_arrivee + position_y][colonne_arrivee] == joueur_adverse and
+                grille[ligne_arrivee + (position_y * 2)][colonne_arrivee] == joueur_actuel):
+            grille[ligne_arrivee + position_y][colonne_arrivee] = "-"
+    elif -2 <= position_y <= 2 and position_y != 0:
+        if grille[ligne_arrivee + (position_y // 2)][colonne_arrivee] == joueur_adverse:
+            grille[ligne_arrivee + (position_y // 2)][colonne_arrivee] = "-"
+        if (grille[ligne_arrivee - (position_y // 2)][colonne_arrivee] == joueur_adverse and
+                grille[ligne_arrivee - position_y][colonne_arrivee] == joueur_actuel):
+            grille[ligne_arrivee - (position_y // 2)][colonne_arrivee] = "-"
+    else:
+        if (grille[ligne_arrivee + 1][colonne_arrivee] == joueur_adverse and
+                grille[ligne_arrivee + +2][colonne_arrivee] == joueur_actuel):
+            grille[ligne_arrivee + 1][colonne_arrivee] = "-"
+        if (grille[ligne_arrivee - 1][colonne_arrivee] == joueur_adverse and
+                grille[ligne_arrivee - 2][colonne_arrivee] == joueur_actuel):
+            grille[ligne_arrivee - 1][colonne_arrivee] = "-"
 
+
+def capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_x):
+    if -1 <= position_x <= 1 and position_x != 0:
+        if (grille[ligne_arrivee][colonne_arrivee + position_x] == joueur_adverse and
+                grille[ligne_arrivee][colonne_arrivee + (position_x * 2)] == joueur_actuel):
+            grille[ligne_arrivee][colonne_arrivee + position_x] = "-"
+    elif -2 <= position_x <= 2 and position_x != 0:
+        if grille[ligne_arrivee][colonne_arrivee + (position_x // 2)] == joueur_adverse:
+            grille[ligne_arrivee][colonne_arrivee + (position_x // 2)] = "-"
+        if grille[ligne_arrivee][colonne_arrivee - (position_x // 2)] == joueur_adverse:
+            grille[ligne_arrivee][colonne_arrivee - (position_x // 2)] = "-"
+    else:
+        if (grille[ligne_arrivee][colonne_arrivee + 1] == joueur_adverse and
+                grille[ligne_arrivee][colonne_arrivee + 2] == joueur_actuel):
+            grille[ligne_arrivee][colonne_arrivee + 1] = "-"
+        if (grille[ligne_arrivee][colonne_arrivee - 1] == joueur_adverse and
+                grille[ligne_arrivee][colonne_arrivee - 2] == joueur_actuel):
+            grille[ligne_arrivee][colonne_arrivee - 1] = "-"
+
+
+#####################################################################################
+# fin_de_partie vérifie si il reste encore des pions sur le plateau.                #
+# En fonction des pions restant, la victoire sera désigné, puis le code s'éteindra. #
+# Note : Il n'y a pas de possibilité d'égalité selon les règles !                   #
+#####################################################################################
 
 def fin_de_partie(grille):
     noir = 0
     blanc = 0
+
+    # On compte chaque pions sur la grille #
     for ligne in range(0, len(grille)):
         for colonne in range(0, len(grille[0])):
             if grille[ligne][colonne] == "●":
                 blanc += 1
             if grille[ligne][colonne] == "○":
                 noir += 1
+
+    # Si il n'y a plus de pions noir => les blancs on gagné #
     if noir == 0:
         print("Les Blancs ont gagné. Félicitations !")
-        return True
+        input("Entrer pour terminer.... ")
+        exit()
+
+    # Si il n'y a plus de pions blanc => les noirs on gagné #
     if blanc == 0:
         print("Les Noirs ont gagné. Félicitations !")
-        return True
+        input("Entrer pour terminer.... ")
+        exit()
+
+    # Si il y a encore des pions de chaque côté, la partie continue #
     return False
 
 
 #######################################################################################
-# validation_deplacement vérifie si le joueur actuel peut bien jouer a cet endroit.   #
-# Un déplacement n'est possible que si, case vide + déplacement orthogonale de 1 case #
+# validation_deplacement vérifie si le joueur actuel peut bien jouer à cet endroit.   #
+# Un déplacement n'est possible que si: case vide + déplacement orthogonale de 1 case #
 #######################################################################################
+
 def validation_deplacement(ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee, grille):
+
+    # Es que la case est vide ? #
     if grille[ligne_arrivee][colonne_arrivee] != "-":
+        # Si non erreur #
         afficher_erreur("move01")
         return False
+
+    # Es que le déplacement est de 0 ? #
     if (ligne_depart == ligne_arrivee) and (colonne_depart == colonne_arrivee):
+        # Si non erreur #
         afficher_erreur("move02")
         return False
+
+    # Es que le déplacement est orthogonale et de 1 ? #
     if ((abs(ligne_depart - ligne_arrivee) == 1) and (abs(colonne_depart - colonne_arrivee) == 0) or
             (abs(ligne_depart - ligne_arrivee) == 0) and (abs(colonne_depart - colonne_arrivee) == 1)):
+        # Si oui return True #
         return True
+    # Si non erreur #
     afficher_erreur("move02")
     return False
 
 
 #####################################################################################
-# tour_joueur permet de simuler le tour d'un joueur, elle va passer par la fonction #
-# "saisir_coordonnees" pour définir le mouvement que le joueur souhaite faire.      #
-# Elle va ensuite appliqué ce mouvement a la grille, et définir les protection.     #
+# deplacement permet de définir le déplacement du joueur, grâce à l'appel de la     #
+# fonction "saisir_coordonnees" il va pouvoir choisir le déplacement souhaitée.     #
+# Note : La fonction, serait beaucoup plus optimiser avec des continue, des break,  #
+#        ou même de la récursion. Mais c'est interdit.                              #
 #####################################################################################
 
-def tour_joueur(grille, joueur_actuel):
+def deplacement(grille, joueur_actuel):
+    print("Sélection du pion :", end="\n     ")
     ligne_depart, colonne_depart = saisir_coordonnees(grille)
 
     # Vérifie si le pion désigné par l'input, est un pion du joueur #
@@ -105,17 +194,53 @@ def tour_joueur(grille, joueur_actuel):
         # Si l'input n'est pas un pion ou n'appartient pas au joueur, afficher_erreur affiche une erreur #
         # Erreur : Input03 #
         afficher_erreur("input03")
+        afficher_grille(grille)
+        print("Sélection du pion :", end="\n     ")
         ligne_depart, colonne_depart = saisir_coordonnees(grille)
 
+    print("Sélection de l'endroit ou vous voulez le déplacer :", end="\n     ")
     ligne_arrivee, colonne_arrivee = saisir_coordonnees(grille)
 
     # Appele "validation_deplacement" pour savoir si le déplacement est possible #
+    # Si tout est bon, return True #
     while not validation_deplacement(ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee, grille):
+        # Sinon on repasse par tout les test précédent #
+        afficher_grille(grille)
+        print("Sélection du pion a déplacer :", end="\n     ")
         ligne_depart, colonne_depart = saisir_coordonnees(grille)
+
+        # Vérifie si le pion désigné par l'input, est un pion du joueur #
+        # Si tout est bon, return True #
         while grille[ligne_depart][colonne_depart] != joueur_actuel:
+            # Si l'input n'est pas un pion ou n'appartient pas au joueur, afficher_erreur affiche une erreur #
+            # Erreur : Input03 #
             afficher_erreur("input03")
+            afficher_grille(grille)
+            print("Sélection du pion a déplacer :", end="\n     ")
             ligne_depart, colonne_depart = saisir_coordonnees(grille)
+
+        print("Sélection de l'endroit ou vous voulez le déplacer :", end="\n     ")
         ligne_arrivee, colonne_arrivee = saisir_coordonnees(grille)
+    return ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee
+
+
+#####################################################################################
+# tour_joueur permet de simuler le tour d'un joueur :                               #
+#   - On appelle la fonction "deplacement"                                          #
+#   - On récupère les coordonnées de départ et d'arrivée, on applique les           #
+#     changement à la grille.                                                       #
+#   - On appelle la fonction "capture"                                              #
+#####################################################################################
+
+def tour_joueur(grille, joueur_actuel):
+    ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee = deplacement(grille, joueur_actuel)
+    grille[ligne_depart][colonne_depart] = "-"
+    grille[ligne_arrivee][colonne_arrivee] = joueur_actuel
+    capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel)
+
+
+# FIN ATELIER 3                                                                          #
+##########################################################################################
 
 
 ############################################################################
@@ -168,8 +293,6 @@ def afficher_grille(grille):
 # saisir_coordonnees, va demandé un va ensuite appeler est_au_bon_format pour        #
 # vérifier son format (qui va appelé est_dans_grille) puis va définir les coordonées #
 # choisies.                                                                          #
-# Petite note : Il est stipulé dans le document que le tour du joueur ne doit pas    #
-#               être pris en compte, c'est ce que j'ai fait.                         #
 ######################################################################################
 
 def saisir_coordonnees(grille):
@@ -187,7 +310,7 @@ def saisir_coordonnees(grille):
     ligne = int(saisie_du_joueur[1] + saisie_du_joueur[2]) - 1
 
     # print(f"...") permet de print une variable entre {} #
-    print(f"Vous avez choisi : grille[{ligne}][{colonne}] = {grille[ligne][colonne]}")
+    print(f"Vous avez choisi la case : {saisie_du_joueur}\n")
 
     # On return les valeurs #
     return ligne, colonne
@@ -306,11 +429,11 @@ def choix_grille(grille_debut, grille_milieu, grille_fin):
 
         # Si il est correct on désigne la grille #
         if configuration == "1":
-            return grille_debut, [], "●"
+            return grille_debut, "●"
         elif configuration == "2":
-            return grille_milieu, [{3, 7}], "○"
+            return grille_milieu, "○"
         elif configuration == "3":
-            return grille_fin, [], "○"
+            return grille_fin, "○"
         else:
             # Si il ne l'est pas, retourne une erreur #
             afficher_erreur("input01")
@@ -370,32 +493,57 @@ grille_fin = [
 # FIN DE PARTIE SUR LES CONFIGURATIONS POSSIBLES                                                               #
 ################################################################################################################
 
-# On demande la grille voulu, on copie les informations de partie et on affiche la grille #
-grille_choisi, pions_proteger, joueur_actuel = choix_grille(grille_debut, grille_milieu, grille_fin)
+################################################################################################################
+# CODE PRINCIPAL                                                                                               #
+
+# On demande la partie souhaiter, on récupère la grille et le tour du joueur #
+grille_choisi, joueur_actuel = choix_grille(grille_debut, grille_milieu, grille_fin)
+os.system("cls;clear")
 print("Lorsque vous exécuter le fichier .py dans l'invite de commande\nsi l'affichage est trop petit, utiliser"
       "Ctrl+Molette pour zoomer (ou l'outil loupe windows)", end="\n\n")
+
+# On affiche la grille #
 afficher_grille(grille_choisi)
 
 # print(f"....") permet de lire une variable entre {} dans un print)
 print(f"Tour des pions {joueur_actuel}")
 
-#################################################################################
-# Début de jeu suffit de mettre cela dans une boucle pour faire une vrai partie #
+# On commence le tour du joueur actuel #
 tour_joueur(grille_choisi, joueur_actuel)
 
-# On vérifie si c'est une fin de partie #
-fin_de_partie(grille_choisi)
+# On clear et on réaffiche proprement la grille avec les changement #
+os.system("cls;clear")
+print("")
+afficher_grille(grille_choisi)
 
-# On change de joueur #
+# On vérifie si c'est une fin de partie #
+# Si oui, fin du code #
+fin_de_partie(grille_choisi)
+# Sinon le code continue #
+
+# On change de joueur, et on affiche le joueur désigné #
 if joueur_actuel == "●":
     joueur_actuel = "○"
-else :
+else:
     joueur_actuel = "●"
+print(f"Tour des pions {joueur_actuel}")
 
+# On commence le tour du joueur actuel #
 tour_joueur(grille_choisi, joueur_actuel)
 
+# On clear et on réaffiche proprement la grille avec les changement #
+os.system("cls;clear")
+print("")
+afficher_grille(grille_choisi)
+
 # On vérifie si c'est une fin de partie #
+# Si oui, fin du code #
 fin_de_partie(grille_choisi)
+# Sinon le code continue #
+# (Dans ce cas la, il est demandé juste 2 tour et non pas une partie, donc le code s'arrête) #
 
 # Permet d'éviter que le programme ce ferme soundainement (seulement lors d'une éxécution dans un terminal) #
 input("Entrer pour terminer.... ")
+
+#                                                                                                              #
+################################################################################################################

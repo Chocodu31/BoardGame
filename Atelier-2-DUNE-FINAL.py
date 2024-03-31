@@ -10,7 +10,7 @@
 #   comme une nouvelle page).                                      #
 #   Cela permet d'avoir un résultat plus propre lors de            #
 #   l'exécution.                                                   #
-#   (Elle n'est pas était interdite d'utilisation, j'ai vérifié    #
+#   (Elle n'était pas interdite d'utilisation, j'ai vérifié    #
 #   au près du professeur présentant le cours amphi de l'UE).      #
 #                                                                  #
 # - La fonction "show_error" permet d'afficher un message d'erreur #
@@ -312,7 +312,7 @@ input("Entrer pour terminer.... ")
 # print("----------------\n TEST REUSSI\n----------------")
 # assert est_dans_grille(0, 0, grille_start) == True
 # print("----------------\n TEST REUSSI\n----------------")
-# assert est_au_bon_format("A01", grille_start) == False
+# assert est_au_bon_format("AO1", grille_start) == False
 # print("----------------\n TEST REUSSI\n----------------")
 # assert est_au_bon_format("A04", grille_start) == True
 # print("----------------\n TEST REUSSI\n----------------")
