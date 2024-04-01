@@ -46,46 +46,64 @@ import os
 ##########################################################################################
 # DEBUT ATELIER 3                                                                        #
 
-def capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel):
-    if joueur_actuel == "●":
-        joueur_adverse = "○"
-    else:
-        joueur_adverse = "●"
+#####################################################################################
+# capture va être appelé pour vérifié si il y a une capture, elle va appelé
+# deux fonctions, capture_verticale et capture_horizontale. Cela va permettre
+# de tester toutes les possibilité sur le plateau.
+#
+# Explication : Les capture se font si un pion est entouré par deux pions adverse
+#               de manière orthogonale. Cependant lorsqu'un pion ce déplace entre
+#               ces deux pion lui même, il est protéger. Si on fait une fonction
+#               qui analyse toute la grille, il nous faudrait faire une variable
+#               de protection pour proteger les pions.
+#               Pour palier à ce problème, j'ai décidé de juste analyser le déplacement.
+#               Donc, on va juste tester toute les possiblité en fonction des endroit
+#               ou sont les pions.
+#####################################################################################
 
+def capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse):
+    
+    # On teste toute les possiblité de capture verticalement, -1 c'est dernière ligne (-2 avant dernière) #
+    # +1 c'est première ligne (2 deuxième), 0 n'importe quelle ligne. #
     if ligne_arrivee == len(grille) - 1:
-        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
+        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
     elif ligne_arrivee == 0:
-        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
+        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
     elif ligne_arrivee == len(grille) - 2:
-        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
+        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
     elif ligne_arrivee == 1:
-        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
+        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
     else:
-        capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
+        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
 
+    # On teste toute les possiblité de capture horizontalement, -1 c'est dernière colonne (-2 avant dernière) #
+    # +1 c'est première colonne (2 deuxième), 0 n'importe quelle colonne. #
     if colonne_arrivee == len(grille) - 1:
-        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
+        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
     elif colonne_arrivee == 0:
-        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
+        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
     elif colonne_arrivee == len(grille) - 2:
-        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
+        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
     elif colonne_arrivee == 1:
-        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
+        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
     else:
-        capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
+        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
 
 
-def capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_y):
+def capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_y):
+    # Si au bord faire ça #
     if -1 <= position_y <= 1 and position_y != 0:
         if (grille[ligne_arrivee + position_y][colonne_arrivee] == joueur_adverse and
                 grille[ligne_arrivee + (position_y * 2)][colonne_arrivee] == joueur_actuel):
             grille[ligne_arrivee + position_y][colonne_arrivee] = "-"
+    # Sinon si une case avant bord faire ça #
     elif -2 <= position_y <= 2 and position_y != 0:
         if grille[ligne_arrivee + (position_y // 2)][colonne_arrivee] == joueur_adverse:
             grille[ligne_arrivee + (position_y // 2)][colonne_arrivee] = "-"
         if (grille[ligne_arrivee - (position_y // 2)][colonne_arrivee] == joueur_adverse and
                 grille[ligne_arrivee - position_y][colonne_arrivee] == joueur_actuel):
             grille[ligne_arrivee - (position_y // 2)][colonne_arrivee] = "-"
+    # Sinon faire ça #
     else:
         if (grille[ligne_arrivee + 1][colonne_arrivee] == joueur_adverse and
                 grille[ligne_arrivee + +2][colonne_arrivee] == joueur_actuel):
@@ -95,16 +113,19 @@ def capture_bas_haut(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joue
             grille[ligne_arrivee - 1][colonne_arrivee] = "-"
 
 
-def capture_gauche_droite(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_x):
+def capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_x):
+    # Si au bord faire ça #
     if -1 <= position_x <= 1 and position_x != 0:
         if (grille[ligne_arrivee][colonne_arrivee + position_x] == joueur_adverse and
                 grille[ligne_arrivee][colonne_arrivee + (position_x * 2)] == joueur_actuel):
             grille[ligne_arrivee][colonne_arrivee + position_x] = "-"
+    # Sinon si une case avant bord faire ça #
     elif -2 <= position_x <= 2 and position_x != 0:
         if grille[ligne_arrivee][colonne_arrivee + (position_x // 2)] == joueur_adverse:
             grille[ligne_arrivee][colonne_arrivee + (position_x // 2)] = "-"
         if grille[ligne_arrivee][colonne_arrivee - (position_x // 2)] == joueur_adverse:
             grille[ligne_arrivee][colonne_arrivee - (position_x // 2)] = "-"
+    # Sinon faire ça #
     else:
         if (grille[ligne_arrivee][colonne_arrivee + 1] == joueur_adverse and
                 grille[ligne_arrivee][colonne_arrivee + 2] == joueur_actuel):
@@ -179,7 +200,8 @@ def validation_deplacement(ligne_depart, colonne_depart, ligne_arrivee, colonne_
 
 #####################################################################################
 # deplacement permet de définir le déplacement du joueur, grâce à l'appel de la     #
-# fonction "saisir_coordonnees" il va pouvoir choisir le déplacement souhaitée.     #
+# fonction "saisir_coordonnees" il va pouvoir choisir le déplacement souhaitée      #
+# puis le renvoyer a tour_joueur, pour que lui mette à jour la grille.              #
 # Note : La fonction, serait beaucoup plus optimiser avec des continue, des break,  #
 #        ou même de la récursion. Mais c'est interdit.                              #
 #####################################################################################
@@ -236,7 +258,11 @@ def tour_joueur(grille, joueur_actuel):
     ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee = deplacement(grille, joueur_actuel)
     grille[ligne_depart][colonne_depart] = "-"
     grille[ligne_arrivee][colonne_arrivee] = joueur_actuel
-    capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel)
+    if joueur_actuel == "●":
+        joueur_adverse = "○"
+    else:
+        joueur_adverse = "●"
+    capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse)
 
 
 # FIN ATELIER 3                                                                          #
@@ -511,9 +537,7 @@ print(f"Tour des pions {joueur_actuel}")
 # On commence le tour du joueur actuel #
 tour_joueur(grille_choisi, joueur_actuel)
 
-# On clear et on réaffiche proprement la grille avec les changement #
-os.system("cls;clear")
-print("")
+# On réaffiche proprement la grille avec les changement #
 afficher_grille(grille_choisi)
 
 # On vérifie si c'est une fin de partie #
@@ -531,9 +555,7 @@ print(f"Tour des pions {joueur_actuel}")
 # On commence le tour du joueur actuel #
 tour_joueur(grille_choisi, joueur_actuel)
 
-# On clear et on réaffiche proprement la grille avec les changement #
-os.system("cls;clear")
-print("")
+# On réaffiche proprement la grille avec les changement #
 afficher_grille(grille_choisi)
 
 # On vérifie si c'est une fin de partie #
@@ -541,6 +563,91 @@ afficher_grille(grille_choisi)
 fin_de_partie(grille_choisi)
 # Sinon le code continue #
 # (Dans ce cas la, il est demandé juste 2 tour et non pas une partie, donc le code s'arrête) #
+
+####################################
+# LA SUITE SONT DES TEST
+
+grille_test = [
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "●", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "●", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "●", "-", "○", "●", "-", "-"],
+    ["-", "●", "-", "-", "-", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+]
+capture(grille_test, 3, 6, "○", "●")
+assert grille_test == [
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "●", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "●", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "●", "-", "○", "●", "-", "-"],
+    ["-", "●", "-", "-", "-", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+]
+grille_test = [
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "●", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "●", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "●", "○", "●", "-", "-"],
+    ["-", "●", "-", "-", "-", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+]
+capture(grille_test, 3, 5, "●", "○")
+assert grille_test == [
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "●", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "●", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "●", "-", "●", "-", "-"],
+    ["-", "●", "-", "-", "-", "-", "●", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+]
+grille_test = [
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "○", "●", "○", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "●", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "○", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+]
+capture(grille_test, 3, 7, "○", "●")
+assert grille_test == [
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "○", "-", "○", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "○", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+]
+print("Les test de la fonction capture sont réussi")
+print("La fonction déplacement et tour_joueur ne possède pas de test, puisque nous demandons un input joueur, "
+      "et je ne peut pas tester ces fonctions avec des assert sans utiliser des méthode interdite par les règles.")
+
+#
+####################################
 
 # Permet d'éviter que le programme ce ferme soundainement (seulement lors d'une éxécution dans un terminal) #
 input("Entrer pour terminer.... ")
