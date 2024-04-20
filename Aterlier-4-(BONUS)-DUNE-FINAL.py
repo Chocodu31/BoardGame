@@ -79,6 +79,7 @@ def scan_pos(grille, ligne, colonne, element):
 #   - On renvoie les coordonées                                                     #
 #####################################################################################
 
+
 def deplacement_ia(grille, joueur_actuel, ligne, colonne):
     # On test voir quel déplacement est possible #
     mouvement_ia = []
@@ -90,8 +91,32 @@ def deplacement_ia(grille, joueur_actuel, ligne, colonne):
         mouvement_ia.append([ligne, colonne + 1])
     if scan_pos(grille, ligne, colonne - 1, "-"):
         mouvement_ia.append([ligne, colonne - 1])
-    choix = random.randint(0, len(mouvement_ia) - 1)
-    return mouvement_ia[choix][0], mouvement_ia[choix][1]
+
+    if joueur_actuel == "●":
+        joueur_adverse = "○"
+    else:
+        joueur_adverse = "●"
+
+    ################################################################################
+    # Il s'agit du code qui rend l'IA "Intéligente".
+    #
+    best = 0
+    valeur = 0
+    # On cherche le meilleur mouvement pour le pion #
+    for i in mouvement_ia:
+        grille_de_test = grille.copy()
+        actuel = capture(grille_de_test, i[0], i[1], joueur_actuel, joueur_adverse)
+        if actuel > best:
+            best = actuel
+            valeur = i
+
+    # Si y'en a pas, on appel le random #
+    if valeur == 0:
+        choix = random.randint(0, len(mouvement_ia) - 1)
+        return mouvement_ia[choix][0], mouvement_ia[choix][1]
+    return valeur[0], valeur[1]
+    #
+    #################################################################################
 
 
 #####################################################################################
@@ -297,77 +322,95 @@ def choix_jeu():
 #####################################################################################
 
 def capture(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse):
+
+    nbr_capture = 0
     # On teste toute les possiblité de capture verticalement, -1 c'est dernière ligne (-2 avant dernière) #
     # +1 c'est première ligne (2 deuxième), 0 n'importe quelle ligne. #
     if ligne_arrivee == len(grille) - 1:
-        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
+        nbr_capture += capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
     elif ligne_arrivee == 0:
-        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
+        nbr_capture += capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
     elif ligne_arrivee == len(grille) - 2:
-        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
+        nbr_capture += capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
     elif ligne_arrivee == 1:
-        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
+        nbr_capture += capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
     else:
-        capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
+        nbr_capture += capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
 
     # On teste toute les possiblité de capture horizontalement, -1 c'est dernière colonne (-2 avant dernière) #
     # +1 c'est première colonne (2 deuxième), 0 n'importe quelle colonne. #
     if colonne_arrivee == len(grille) - 1:
-        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
+        nbr_capture += capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -1)
     elif colonne_arrivee == 0:
-        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
+        nbr_capture += capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 1)
     elif colonne_arrivee == len(grille) - 2:
-        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
+        nbr_capture += capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 2)
     elif colonne_arrivee == 1:
-        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
+        nbr_capture += capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, -2)
     else:
-        capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
+        nbr_capture += capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, 0)
+
+    return nbr_capture
 
 
 def capture_verticale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_y):
+    nbr_capture_verticale = 0
     # Si au bord faire ça #
     if -1 <= position_y <= 1 and position_y != 0:
         if (grille[ligne_arrivee + position_y][colonne_arrivee] == joueur_adverse and
                 grille[ligne_arrivee + (position_y * 2)][colonne_arrivee] == joueur_actuel):
             grille[ligne_arrivee + position_y][colonne_arrivee] = "-"
+            nbr_capture_verticale += 1
     # Sinon si une case avant bord faire ça #
     elif -2 <= position_y <= 2 and position_y != 0:
         if grille[ligne_arrivee + (position_y // 2)][colonne_arrivee] == joueur_adverse:
             grille[ligne_arrivee + (position_y // 2)][colonne_arrivee] = "-"
+            nbr_capture_verticale += 1
         if (grille[ligne_arrivee - (position_y // 2)][colonne_arrivee] == joueur_adverse and
                 grille[ligne_arrivee - position_y][colonne_arrivee] == joueur_actuel):
             grille[ligne_arrivee - (position_y // 2)][colonne_arrivee] = "-"
+            nbr_capture_verticale += 1
     # Sinon faire ça #
     else:
         if (grille[ligne_arrivee + 1][colonne_arrivee] == joueur_adverse and
-                grille[ligne_arrivee + 2][colonne_arrivee] == joueur_actuel):
+                grille[ligne_arrivee + +2][colonne_arrivee] == joueur_actuel):
             grille[ligne_arrivee + 1][colonne_arrivee] = "-"
+            nbr_capture_verticale += 1
         if (grille[ligne_arrivee - 1][colonne_arrivee] == joueur_adverse and
                 grille[ligne_arrivee - 2][colonne_arrivee] == joueur_actuel):
             grille[ligne_arrivee - 1][colonne_arrivee] = "-"
+            nbr_capture_verticale += 1
+    return nbr_capture_verticale
 
 
 def capture_horizontale(grille, ligne_arrivee, colonne_arrivee, joueur_actuel, joueur_adverse, position_x):
+    nbr_capture_horizontale = 0
     # Si au bord faire ça #
     if -1 <= position_x <= 1 and position_x != 0:
         if (grille[ligne_arrivee][colonne_arrivee + position_x] == joueur_adverse and
                 grille[ligne_arrivee][colonne_arrivee + (position_x * 2)] == joueur_actuel):
             grille[ligne_arrivee][colonne_arrivee + position_x] = "-"
+            nbr_capture_horizontale += 1
     # Sinon si une case avant bord faire ça #
     elif -2 <= position_x <= 2 and position_x != 0:
         if grille[ligne_arrivee][colonne_arrivee + (position_x // 2)] == joueur_adverse:
             grille[ligne_arrivee][colonne_arrivee + (position_x // 2)] = "-"
+            nbr_capture_horizontale += 1
         if (grille[ligne_arrivee][colonne_arrivee - (position_x // 2)] == joueur_adverse and
-            grille[ligne_arrivee][colonne_arrivee - position_x] == joueur_actuel):
+                grille[ligne_arrivee][colonne_arrivee - position_x] == joueur_actuel):
             grille[ligne_arrivee][colonne_arrivee - (position_x // 2)] = "-"
+            nbr_capture_horizontale += 1
     # Sinon faire ça #
     else:
         if (grille[ligne_arrivee][colonne_arrivee + 1] == joueur_adverse and
                 grille[ligne_arrivee][colonne_arrivee + 2] == joueur_actuel):
             grille[ligne_arrivee][colonne_arrivee + 1] = "-"
+            nbr_capture_horizontale += 1
         if (grille[ligne_arrivee][colonne_arrivee - 1] == joueur_adverse and
                 grille[ligne_arrivee][colonne_arrivee - 2] == joueur_actuel):
             grille[ligne_arrivee][colonne_arrivee - 1] = "-"
+            nbr_capture_horizontale += 1
+    return nbr_capture_horizontale
 
 
 #####################################################################################
