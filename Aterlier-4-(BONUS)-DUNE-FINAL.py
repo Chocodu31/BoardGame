@@ -38,6 +38,17 @@
 #   ligne et print que j'ai mit pour la lisibilité),               #
 #   (Hors "afficher_grille", celle-ci avait le droit d'être        #
 #   plus longue).                                                  #
+#                                                                  #
+# - L'ia n'est pas vraiment intéligente, c'est à dire :            #
+#       - Elle choisit un pion Aléatoirement.                      #
+#       - Elle applique le meilleur mouvement que le pion peut     #
+#       faire                                                      #
+#   Certains match avec elles peuvent être très très long, comme   #
+#   très très cours, tout repose sur l'aléatoire, comme demandée   #
+#   Note : Je n'ai pas réussi a faire la sélection du meilleur     #
+#          pion, a chaque fois l'IA fesait le meilleur mouvement   #
+#          seul problème, l'affichage montré quelque chose de      #
+#          totalement différent, et je n'ait pas réussi a le fix   #
 ####################################################################
 
 import os

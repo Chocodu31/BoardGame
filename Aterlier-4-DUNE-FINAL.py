@@ -38,6 +38,12 @@
 #   ligne et print que j'ai mit pour la lisibilité),               #
 #   (Hors "afficher_grille", celle-ci avait le droit d'être        #
 #   plus longue).                                                  #
+#                                                                  #
+# - L'ia est NAIVE, c'est à dire :                                 #
+#       - Elle choisit un pion Aléatoirement.                      #
+#       - Elle applique un mouvement aléatoire                     #
+#   Certains match avec elles peuvent être très très long, comme   #
+#   très très cours, tout repose sur l'aléatoire, comme demandée   #
 ####################################################################
 
 import os
